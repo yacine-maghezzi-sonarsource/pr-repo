@@ -3,7 +3,8 @@ name: Build
 on:
   push:
     branches:
-      - main, feature* # the name of your main branch
+      - main
+      - feature* # the name of your main branch
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
