@@ -4,10 +4,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.sonarqube</groupId>
-  <artifactId>sonarscanner-maven-basic-morelanguages</artifactId>
+  <artifactId>pr-deco</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name>Maven and more languages</name>
+  <name>Pr Deco Example</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
