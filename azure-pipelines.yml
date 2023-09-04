@@ -1,0 +1,53 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  SONAR_SCANNER_OPTS: '-Xmx4096m -Dsonar.token=squ_6d976468544e6b9d33fd2b9aee85d677d874e871'
+  # squ_b4527bbe99f81bdf0cccfae3ea3442fdb8505d59
+  SONARQUBE_HOST_URL: 'https://nautilus.sonarqube.org/'
+  SONAR_SCANNER_VERSION: '5.0.1.3006' 
+  BUILD_WRAPPER_OUT_DIR: 'cpp-build-wrapper/bw_outputs'
+
+
+steps:
+  # Make Build Wrapper available
+  - task: SonarQubePrepare@5
+    inputs:
+      SonarQube: 'SQNautilus'
+      scannerMode: 'Other'
+      extraProperties: |
+        # Additional properties that will be passed to the scanner, 
+        # Put one key=value per line, example:
+        # sonar.exclusions=**/*.bin
+        sonar.cfamily.build-wrapper-output=/home/vsts/work/1/s/cpp-build-wrapper/bw_outputs
+        sonar.projectKey=testmaven
+  - script: |
+      rm -rf /home/vsts/.sonar/cache/*
+      mkdir -p $HOME/.sonar
+      curl -sSLo $HOME/.sonar/build-wrapper-linux-x86.zip ${{variables.SONARQUBE_HOST_URL}}/static/cpp/build-wrapper-linux-x86.zip
+      unzip -o $HOME/.sonar/build-wrapper-linux-x86.zip -d $HOME/.sonar/      
+    displayName: Download and install build wrapper
+
+
+  - script: |
+      mkdir build
+      cd cpp-build-wrapper
+      chmod -R 777 *
+      mkdir bw_outputs
+      $HOME/.sonar/build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir /home/vsts/work/1/s/cpp-build-wrapper/bw_outputs /home/vsts/work/1/s/cpp-build-wrapper/build.sh
+      cd ..
+    workingDirectory: .
+    displayName: Run BW
+
+  - script: |
+      mvn clean verify sonar:sonar
+    workingDirectory: .
+    displayName: Run MVN Scan
+
+
+  - task: SonarQubePublish@5
+    inputs:
+      pollingTimeoutSec: '300'
