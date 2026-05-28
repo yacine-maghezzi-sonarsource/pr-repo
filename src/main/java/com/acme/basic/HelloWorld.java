@@ -1,20 +1,17 @@
 package com.acme.basic;
 
+import java.util.logging.Logger;
+
 public class HelloWorld {
 
+  private static final Logger logger = Logger.getLogger(HelloWorld.class.getName());
+
   void sayHello() {
-    System.out.println("Hello World!");
+    logger.info("Hello World!");
   }
 //TODO
   void notCovered() {
-    int target = -5;
-    int num = 3;
-
-    target =- num;  // Noncompliant; target = -3. Is that really what's meant?
-    target =+ num; // Noncompliant; target = 3
-
-    System.out.println("This method is not covered by unit tests");
-    
+    logger.info("This method is not covered by unit tests");
   }
 //TODO
 
